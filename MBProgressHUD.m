@@ -82,6 +82,7 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
     _mode = MBProgressHUDModeIndeterminate;
     _margin = 20.0f;
     _defaultMotionEffectsEnabled = NO;
+    _multi_xy = CGPointMake(1, 1);
 
     if (@available(iOS 13.0, tvOS 13, *)) {
        _contentColor = [[UIColor labelColor] colorWithAlphaComponent:0.7f];
@@ -530,9 +531,10 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
 
     // Center bezel in container (self), applying the offset if set
     CGPoint offset = self.offset;
+    CGPoint multi = self.multi_xy;
     NSMutableArray *centeringConstraints = [NSMutableArray array];
-    [centeringConstraints addObject:[NSLayoutConstraint constraintWithItem:bezel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.f constant:offset.x]];
-    [centeringConstraints addObject:[NSLayoutConstraint constraintWithItem:bezel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.f constant:offset.y]];
+    [centeringConstraints addObject:[NSLayoutConstraint constraintWithItem:bezel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:multi.x constant:offset.x]];
+    [centeringConstraints addObject:[NSLayoutConstraint constraintWithItem:bezel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:multi.y constant:offset.y]];
     [self applyPriority:998.f toConstraints:centeringConstraints];
     [self addConstraints:centeringConstraints];
 
@@ -651,6 +653,13 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
 - (void)setOffset:(CGPoint)offset {
     if (!CGPointEqualToPoint(offset, _offset)) {
         _offset = offset;
+        [self setNeedsUpdateConstraints];
+    }
+}
+
+- (void)setMulti_xy:(CGPoint)multi_xy {
+    if (!CGPointEqualToPoint(multi_xy, _multi_xy)) {
+        _multi_xy = multi_xy;
         [self setNeedsUpdateConstraints];
     }
 }
